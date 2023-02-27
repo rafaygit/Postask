@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id       Int        @id @default(autoincrement())
+  email    String     @unique
+  name     String
+  password String
+  projects Projects[]
+}
+
+model Projects {
+  id      Int       @id @default(autoincrement())
+  name    String
+  user    Users     @relation(fields: [user_id], references: [id])
+  user_id Int
+  folders Folders[]
+}
+
+model Folders {
+  id         Int        @id @default(autoincrement())
+  name       String
+  projects   Projects   @relation(fields: [project_id], references: [id])
+  project_id Int
+  requests   Requests[]
+}
+
+model Requests {
+  id           Int     @id @default(autoincrement())
+  folder_id    Int
+  folders      Folders @relation(fields: [folder_id], references: [id])
+  method       String?
+  url          String?
+  query_params String?
+  body         String?
+  request      String?
+  response     String?
+}
